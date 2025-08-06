@@ -11,7 +11,17 @@ enum Muscle {
     case chest, triceps, biceps, shoulders
 }
 
-struct Workout: Identifiable {
+protocol Workout: Identifiable {
+    var id: UUID { get }
+    var name: String { get }
+    var date: String { get }
+    var topSummary: String { get }
+    var midSummary: String { get }
+    var botSummary: String { get }
+}
+
+
+struct Lift: Identifiable, Workout {
     var id: UUID = UUID()
     
     var name: String
@@ -19,20 +29,56 @@ struct Workout: Identifiable {
     var numberSets: Int
     var muscles: [Muscle]
     var numberPRs: Int
+    
+    var topSummary: String {
+        "\(numberSets) Total Sets"
+    }
+    
+    var midSummary: String {
+        "\(muscles.count) Muscles Hit"
+    }
+    
+    var botSummary: String {
+        "\(numberPRs) PRs"
+    }
+}
+
+struct Cardio: Identifiable, Workout {
+    var id: UUID = UUID()
+    
+    var name: String
+    var date: String
+    var minutes: Int
+    var calories: Int
+    var maxHR: Int
+    
+    var topSummary: String {
+        "\(minutes) Minutes Completed"
+    }
+    
+    var midSummary: String {
+        "\(calories) Calories Burned"
+    }
+    
+    var botSummary: String {
+        "\(maxHR) BPM Max Heart Rate"
+    }
 }
 
 struct LogView: View {
-    @State var workouts: [Workout] = [Workout(name: "Push", date: "Mon 2", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Workout(name: "Pull", date: "Tue 3", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Workout(name: "Legs", date: "Wed 4", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
+    @State var lifts: [Lift] = [Lift(name: "Push", date: "Mar 2", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: "Mar 3", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: "Mar 4", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
+    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: "Jun 4", minutes: 30, calories: 300, maxHR: 150)]
     @State var showingSheet: Bool = false
     @State var inputName: String = ""
     @State var inputSets: String = ""
     @State var inputPRs: String = ""
     @State var inputDate: String = ""
+    @State var showCardio: Bool = false
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 topButtonHStack
-                Text("June Log")
+                Text("Log")
                     .font(.system(size: 35))
                     .bold()
                     .foregroundStyle(.white)
@@ -41,11 +87,27 @@ struct LogView: View {
                 
                 belowTitleHStack.padding(.top, 4)
                 
+                Picker("", selection: $showCardio) {
+                    Text("Lifts").tag(false)
+                    Text("Cardio")
+                        .tag(true)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .tint(.white)
+                .foregroundStyle(.red)
+                
                 ScrollView {
-                    ForEach(workouts) { workout in
-                        WorkoutCard(workout: workout)
+                    if !showCardio {
+                        ForEach(lifts) { workout in
+                            WorkoutCard(workout: workout)
+                        }
+                    } else {
+                        ForEach(cardios) { cardio in
+                            WorkoutCard(workout: cardio)
+                        }
                     }
                 }
+                
                 
                 //Spacer()
             }
@@ -93,7 +155,7 @@ struct LogView: View {
             }.frame(height: UIScreen.main.bounds.height * 0.2)
             Button {
                 showingSheet.toggle()
-                workouts.append(Workout(name: inputName, date: inputDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
+                lifts.append(Lift(name: inputName, date: inputDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
                 inputName = ""
                 inputSets = ""
                 inputPRs = ""
@@ -130,7 +192,7 @@ struct LogView: View {
     
     var belowTitleHStack: some View {
         HStack {
-            Text("June 2025")
+            Text("2025")
                 .foregroundStyle(.gray)
             Spacer()
             Text("1 Workout")
@@ -142,7 +204,7 @@ struct LogView: View {
 }
 
 struct WorkoutCard: View {
-    var workout: Workout
+    var workout: any Workout
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 20)
@@ -170,11 +232,11 @@ struct WorkoutCard: View {
                         .bold()
                         .font(.system(size: 25))
                         .foregroundStyle(.white)
-                    Text("\(workout.numberSets) total sets")
+                    Text(workout.topSummary)
                         .foregroundStyle(.white)
-                    Text("\(workout.muscles.count) Muscles Hit")
+                    Text(workout.midSummary)
                         .foregroundStyle(.white)
-                    Text("\(workout.numberPRs) PRs")
+                    Text(workout.botSummary)
                         .foregroundStyle(.white)
                 }
                 Spacer()
