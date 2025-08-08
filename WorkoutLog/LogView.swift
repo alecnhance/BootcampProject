@@ -11,10 +11,18 @@ enum Muscle {
     case chest, triceps, biceps, shoulders
 }
 
+extension Date {
+    func monthDayMultiline() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM\nd" // "Aug\n7"
+        return formatter.string(from: self)
+    }
+}
+
 protocol Workout: Identifiable {
     var id: UUID { get }
     var name: String { get }
-    var date: String { get }
+    var date: Date { get }
     var topSummary: String { get }
     var midSummary: String { get }
     var botSummary: String { get }
@@ -25,7 +33,7 @@ struct Lift: Identifiable, Workout {
     var id: UUID = UUID()
     
     var name: String
-    var date: String
+    var date: Date
     var numberSets: Int
     var muscles: [Muscle]
     var numberPRs: Int
@@ -47,7 +55,7 @@ struct Cardio: Identifiable, Workout {
     var id: UUID = UUID()
     
     var name: String
-    var date: String
+    var date: Date
     var minutes: Int
     var calories: Int
     var maxHR: Int
@@ -66,14 +74,15 @@ struct Cardio: Identifiable, Workout {
 }
 
 struct LogView: View {
-    @State var lifts: [Lift] = [Lift(name: "Push", date: "Mar 2", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: "Mar 3", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: "Mar 4", numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
-    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: "Jun 4", minutes: 30, calories: 300, maxHR: 150)]
+    @State var lifts: [Lift] = [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
+    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150)]
     @State var showingSheet: Bool = false
     @State var inputName: String = ""
     @State var inputSets: String = ""
     @State var inputPRs: String = ""
     @State var inputDate: String = ""
     @State var showCardio: Bool = false
+    @State var insertDate: Date = Date()
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -136,7 +145,7 @@ struct LogView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color(red: 0, green: 0, blue: 0))
-                VStack {
+                VStack(alignment: .leading) {
                     TextField("", text: $inputName, prompt: Text("enter name").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
                         .foregroundStyle(.white)
                     Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
@@ -146,8 +155,16 @@ struct LogView: View {
                     TextField("", text: $inputPRs, prompt: Text("number of PRs").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
                         .foregroundStyle(.white)
                     Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
-                    TextField("", text: $inputDate, prompt: Text("Weekday Date").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
-                        .foregroundStyle(.white)
+                    HStack {
+                        DatePicker(
+                            "Start Date:",
+                            selection: $insertDate,
+                            displayedComponents: [.date]
+                        ).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                            .colorScheme(.dark)
+                            
+                    }.frame(width: UIScreen.main.bounds.width * 0.55)
+    
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
                 .padding(25)
@@ -155,7 +172,7 @@ struct LogView: View {
             }.frame(height: UIScreen.main.bounds.height * 0.2)
             Button {
                 showingSheet.toggle()
-                lifts.append(Lift(name: inputName, date: inputDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
+                lifts.append(Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
                 inputName = ""
                 inputSets = ""
                 inputPRs = ""
@@ -218,12 +235,10 @@ struct WorkoutCard: View {
                         .frame(width: UIScreen.main.bounds.width * 0.125, height: UIScreen.main.bounds.width * 0.125)
                         
                     VStack {
-                        Text("\(workout.date.split(separator: " ")[0])")
+                        Text("\(workout.date.monthDayMultiline())")
                             .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
                             .padding(.top, 1)
-                        Text("\(workout.date.split(separator: " ")[1])")
-                            .foregroundStyle(.white)
-                            .padding(.bottom, 1)
                     }
                 }.frame(width: UIScreen.main.bounds.width * 0.15, height: UIScreen.main.bounds.width * 0.15)
                     .padding(.trailing, 4)
