@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-enum Muscle {
-    case chest, triceps, biceps, shoulders
-}
-
 extension Date {
     func monthDayMultiline() -> String {
         let formatter = DateFormatter()
@@ -31,59 +27,7 @@ extension Array where Element: Workout {
 }
 
 
-protocol Workout: Identifiable {
-    var id: UUID { get }
-    var name: String { get }
-    var date: Date { get }
-    var topSummary: String { get }
-    var midSummary: String { get }
-    var botSummary: String { get }
-}
 
-
-struct Lift: Identifiable, Workout {
-    var id: UUID = UUID()
-    
-    var name: String
-    var date: Date
-    var numberSets: Int
-    var muscles: [Muscle]
-    var numberPRs: Int
-    
-    var topSummary: String {
-        "\(numberSets) Total Sets"
-    }
-    
-    var midSummary: String {
-        "\(muscles.count) Muscles Hit"
-    }
-    
-    var botSummary: String {
-        "\(numberPRs) PRs"
-    }
-}
-
-struct Cardio: Identifiable, Workout {
-    var id: UUID = UUID()
-    
-    var name: String
-    var date: Date
-    var minutes: Int
-    var calories: Int
-    var maxHR: Int
-    
-    var topSummary: String {
-        "\(minutes) Minutes Completed"
-    }
-    
-    var midSummary: String {
-        "\(calories) Calories Burned"
-    }
-    
-    var botSummary: String {
-        "\(maxHR) BPM Max Heart Rate"
-    }
-}
 
 struct LogView: View {
     @State var lifts: [Lift] = [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
