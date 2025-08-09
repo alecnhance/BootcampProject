@@ -40,47 +40,51 @@ struct LogView: View {
     @State var showCardio: Bool = false
     @State var insertDate: Date = Date()
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                topButtonHStack
-                Text("Log")
-                    .font(.system(size: 35))
-                    .bold()
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 10)
-                
-                belowTitleHStack.padding(.top, 4)
-                
-                Picker("", selection: $showCardio) {
-                    Text("Lifts").tag(false)
-                    Text("Cardio")
-                        .tag(true)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .tint(.white)
-                .foregroundStyle(.red)
-                
-                ScrollView {
-                    if !showCardio {
-                        ForEach(lifts.sortedByDate(\.date)) { workout in
-                            WorkoutCard(workout: workout)
-                        }
-                    } else {
-                        ForEach(cardios.sortedByDate(\.date, ascending: false)) { cardio in
-                            WorkoutCard(workout: cardio)
+        NavigationStack {
+            GeometryReader { geometry in
+                VStack {
+                    topButtonHStack
+                    Text("Log")
+                        .font(.system(size: 35))
+                        .bold()
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 10)
+                    
+                    belowTitleHStack.padding(.top, 4)
+                    
+                    Picker("", selection: $showCardio) {
+                        Text("Lifts").tag(false)
+                        Text("Cardio")
+                            .tag(true)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .tint(.white)
+                    .foregroundStyle(.red)
+                    
+                    ScrollView {
+                        if !showCardio {
+                            ForEach(lifts.sortedByDate(\.date)) { workout in
+                                NavigationLink(destination: LiftView(name: workout.name, date: workout.date, numberSets: workout.numberSets, numPRs: workout.numberPRs), label: {
+                                    WorkoutCard(workout: workout)
+                                })
+                            }
+                        } else {
+                            ForEach(cardios.sortedByDate(\.date, ascending: false)) { cardio in
+                                WorkoutCard(workout: cardio)
+                            }
                         }
                     }
+                    
+                    
+                    //Spacer()
                 }
-                
-                
-                //Spacer()
-            }
-            .padding(.horizontal, 10)
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(.black)
-            .sheet(isPresented: $showingSheet) {
-                sheetView.background(Color(red: 0.1, green: 0.1, blue: 0.1))
+                .padding(.horizontal, 10)
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .background(.black)
+                .sheet(isPresented: $showingSheet) {
+                    sheetView.background(Color(red: 0.1, green: 0.1, blue: 0.1))
+                }
             }
         }
     }

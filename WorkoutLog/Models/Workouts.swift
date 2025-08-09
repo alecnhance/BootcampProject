@@ -7,8 +7,10 @@
 import SwiftUI
 
 
-enum Muscle {
+enum Muscle: String, CaseIterable, Identifiable {
     case chest, triceps, biceps, shoulders
+    
+    var id: String { self.rawValue }
 }
 
 
