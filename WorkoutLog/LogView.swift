@@ -14,10 +14,22 @@ enum Muscle {
 extension Date {
     func monthDayMultiline() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM\nd" // "Aug\n7"
+        formatter.dateFormat = "MMM\nd"
         return formatter.string(from: self)
     }
 }
+
+extension Array where Element: Workout {
+    func sortedByDate(_ key: (Element) -> Date, ascending: Bool = true) -> [Element] {
+        self.sorted {
+            ascending ? key($0) < key($1) : key($0) > key($1)
+        }
+//        self.sorted { first, second in
+//            ascending ? key(first) < key(second) : key(first) > key(second)
+//        }
+    }
+}
+
 
 protocol Workout: Identifiable {
     var id: UUID { get }
@@ -74,8 +86,8 @@ struct Cardio: Identifiable, Workout {
 }
 
 struct LogView: View {
-    @State var lifts: [Lift] = [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
-    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150)]
+    @State var lifts: [Lift] = [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
+    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)]
     @State var showingSheet: Bool = false
     @State var inputName: String = ""
     @State var inputSets: String = ""
@@ -107,11 +119,11 @@ struct LogView: View {
                 
                 ScrollView {
                     if !showCardio {
-                        ForEach(lifts) { workout in
+                        ForEach(lifts.sortedByDate(\.date)) { workout in
                             WorkoutCard(workout: workout)
                         }
                     } else {
-                        ForEach(cardios) { cardio in
+                        ForEach(cardios.sortedByDate(\.date, ascending: false)) { cardio in
                             WorkoutCard(workout: cardio)
                         }
                     }
