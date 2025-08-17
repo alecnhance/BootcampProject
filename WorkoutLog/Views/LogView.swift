@@ -30,8 +30,7 @@ extension Array where Element: Workout {
 
 
 struct LogView: View {
-    @State var lifts: [Lift] = [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]
-    @State var cardios: [Cardio] = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)]
+    @ObservedObject var userVM: UserViewModel
     @State var showingSheet: Bool = false
     @State var inputName: String = ""
     @State var inputSets: String = ""
@@ -64,18 +63,17 @@ struct LogView: View {
                     
                     ScrollView {
                         if !showCardio {
-                            ForEach(lifts.sortedByDate(\.date)) { workout in
-                                NavigationLink(destination: LiftView(name: workout.name, date: workout.date, numberSets: workout.numberSets, numPRs: workout.numberPRs), label: {
+                            ForEach(userVM.lifts.sortedByDate(\.date)) { workout in
+                                NavigationLink(destination: LiftView(lift: workout, id: workout.id, userVM: userVM), label: {
                                     WorkoutCard(workout: workout)
                                 })
                             }
                         } else {
-                            ForEach(cardios.sortedByDate(\.date, ascending: false)) { cardio in
+                            ForEach(userVM.cardios.sortedByDate(\.date, ascending: false)) { cardio in
                                 WorkoutCard(workout: cardio)
                             }
                         }
                     }
-                    
                     
                     //Spacer()
                 }
@@ -132,7 +130,7 @@ struct LogView: View {
             }.frame(height: UIScreen.main.bounds.height * 0.2)
             Button {
                 showingSheet.toggle()
-                lifts.append(Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
+                userVM.addLift(lift: Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
                 inputName = ""
                 inputSets = ""
                 inputPRs = ""
@@ -224,5 +222,5 @@ struct WorkoutCard: View {
 }
 
 #Preview {
-    LogView()
+    LogView(userVM: UserViewModel(cardios: [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)],lifts: [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]))
 }
