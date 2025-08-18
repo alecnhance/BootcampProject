@@ -36,6 +36,7 @@ struct LogView: View {
     @State var inputSets: String = ""
     @State var inputPRs: String = ""
     @State var inputDate: String = ""
+    @State var inputMuscles: Set<Muscle> = []
     @State var showCardio: Bool = false
     @State var insertDate: Date = Date()
     var body: some View {
@@ -88,60 +89,77 @@ struct LogView: View {
     }
     
     var sheetView: some View {
-        VStack(alignment: .leading) {
-            Button {
-                showingSheet.toggle()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .foregroundStyle(.cyan)
-            }
-            .padding(.bottom, 10)
-            Text("Enter New Workout")
-                .font(.title)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(red: 0, green: 0, blue: 0))
-                VStack(alignment: .leading) {
-                    TextField("", text: $inputName, prompt: Text("enter name").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
-                        .foregroundStyle(.white)
-                    Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
-                    TextField("", text: $inputSets, prompt: Text("number of sets").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
-                        .foregroundStyle(.white)
-                    Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
-                    TextField("", text: $inputPRs, prompt: Text("number of PRs").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
-                        .foregroundStyle(.white)
-                    Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
-                    HStack {
-                        DatePicker(
-                            "Start Date:",
-                            selection: $insertDate,
-                            displayedComponents: [.date]
-                        ).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
-                            .colorScheme(.dark)
-                            
-                    }.frame(width: UIScreen.main.bounds.width * 0.55)
-    
+        NavigationStack {
+            VStack(alignment: .leading) {
+                Button {
+                    showingSheet.toggle()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(.cyan)
                 }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .padding(25)
-                   
-            }.frame(height: UIScreen.main.bounds.height * 0.2)
-            Button {
-                showingSheet.toggle()
-                userVM.addLift(lift: Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: [], numberPRs: Int(inputPRs) ?? -1))
-                inputName = ""
-                inputSets = ""
-                inputPRs = ""
-                inputDate = ""
-            } label: {
-                Text("Finish")
-                    .foregroundStyle(.cyan)
-            }.padding(.top, 20)
-                .frame(maxWidth: .infinity)
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .padding(10)
+                .padding(.bottom, 10)
+                Text("Enter New Workout")
+                    .font(.title)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(red: 0, green: 0, blue: 0))
+                    VStack(alignment: .leading) {
+                        TextField("", text: $inputName, prompt: Text("enter name").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
+                            .foregroundStyle(.white)
+                        Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                        TextField("", text: $inputSets, prompt: Text("number of sets").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
+                            .foregroundStyle(.white)
+                        Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                        TextField("", text: $inputPRs, prompt: Text("number of PRs").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6)))
+                            .foregroundStyle(.white)
+                        Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                        HStack {
+                            Text("Muscles: ").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                            NavigationLink(destination: MultiSelect(selectedMuscles: $inputMuscles), label: {
+                                Text("Select Muscles")
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(red: 0.15, green: 0.15, blue: 0.15)) // background color
+                                    )
+                            })
+                        }
+                        Rectangle().frame(height: 1).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                        HStack {
+                            DatePicker(
+                                "Start Date:",
+                                selection: $insertDate,
+                                displayedComponents: [.date]
+                            ).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                                .colorScheme(.dark)
+                            
+                        }.frame(width: UIScreen.main.bounds.width * 0.55)
+                        
+                    }
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .padding(25)
+                    
+                }
+                Button {
+                    showingSheet.toggle()
+                    userVM.addLift(lift: Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: Array(inputMuscles), numberPRs: Int(inputPRs) ?? -1))
+                    inputName = ""
+                    inputSets = ""
+                    inputPRs = ""
+                    inputDate = ""
+                } label: {
+                    Text("Finish")
+                        .foregroundStyle(.cyan)
+                }.padding(.top, 20)
+                    .frame(maxWidth: .infinity)
+            }.padding(10).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .background(.black)
+                
+        }
     }
     
     var topButtonHStack: some View {
