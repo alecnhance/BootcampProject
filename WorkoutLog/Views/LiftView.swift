@@ -12,6 +12,7 @@ struct LiftView: View {
     var id: UUID
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userVM: UserViewModel
+    @State var inputMuscles: Set<Muscle>
     var body: some View {
         VStack {
             HStack {
@@ -33,6 +34,20 @@ struct LiftView: View {
                 displayedComponents: [.date]
             ).foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
                 .colorScheme(.dark)
+            HStack {
+                Text("Muscles: ").foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
+                Spacer()
+                NavigationLink(destination: MultiSelect(selectedMuscles: $inputMuscles), label: {
+                    Text("Select Muscles")
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(red: 0.15, green: 0.15, blue: 0.15)) // background color
+                        )
+                })
+            }
             Stepper("Number of Sets: \(lift.numberSets)", value: $lift.numberSets, in: 0...1000)
                 .foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.6))
                 .colorScheme(.dark)
@@ -54,6 +69,7 @@ struct LiftView: View {
                     }
                 }
                 Button {
+                    lift.muscles = Array(inputMuscles)
                     userVM.updateLift(lift: lift)
                     dismiss()
                 } label: {
@@ -73,5 +89,5 @@ struct LiftView: View {
 }
 
 #Preview {
-    LiftView(lift: Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), numberSets: 20, muscles: [], numberPRs: 2),id: UUID(), userVM: UserViewModel(cardios: [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)],lifts: [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]))
+    LiftView(lift: Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), numberSets: 20, muscles: [], numberPRs: 2),id: UUID(), userVM: UserViewModel(cardios: [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)],lifts: [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]), inputMuscles: [])
 }

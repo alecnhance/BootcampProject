@@ -16,7 +16,7 @@ extension Date {
 }
 
 extension Array where Element: Workout {
-    func sortedByDate(_ key: (Element) -> Date, ascending: Bool = true) -> [Element] {
+    func sortedBy<T: Comparable>(_ key: (Element) -> T, ascending: Bool = true) -> [Element] {
         self.sorted {
             ascending ? key($0) < key($1) : key($0) > key($1)
         }
@@ -64,13 +64,13 @@ struct LogView: View {
                     
                     ScrollView {
                         if !showCardio {
-                            ForEach(userVM.lifts.sortedByDate(\.date)) { workout in
-                                NavigationLink(destination: LiftView(lift: workout, id: workout.id, userVM: userVM), label: {
+                            ForEach(userVM.lifts.sortedBy(\.date)) { workout in
+                                NavigationLink(destination: LiftView(lift: workout, id: workout.id, userVM: userVM, inputMuscles: Set(workout.muscles)), label: {
                                     WorkoutCard(workout: workout)
                                 })
                             }
                         } else {
-                            ForEach(userVM.cardios.sortedByDate(\.date, ascending: false)) { cardio in
+                            ForEach(userVM.cardios.sortedBy(\.name, ascending: true)) { cardio in
                                 WorkoutCard(workout: cardio)
                             }
                         }
