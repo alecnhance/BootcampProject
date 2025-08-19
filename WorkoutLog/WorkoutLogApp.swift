@@ -6,6 +6,17 @@
 //
 
 import SwiftUI
+import FirebaseCore
+
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 @main
 struct WorkoutLogApp: App {
@@ -26,9 +37,17 @@ struct WorkoutLogApp: App {
         UIDatePicker.appearance().tintColor = .white // accent highlight
         //UIDatePicker.appearance().backgroundColor = .black // wheel/inline background
     }
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var userVM: UserViewModel = UserViewModel()
+    @StateObject var fbVM: FirebaseViewModel = FirebaseViewModel.vm
     var body: some Scene {
         WindowGroup {
-            LogView(userVM: UserViewModel(cardios: [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)],lifts: [Lift(name: "Push", date: Calendar.current.date(byAdding: .day, value: 0, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Pull", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2), Lift(name: "Legs", date: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(), numberSets: 15, muscles: [.chest, .biceps, .triceps], numberPRs: 2)]))
+            LogView(userVM: userVM)
+                .environmentObject(fbVM)
+                .task {
+                    userVM.lifts = await fbVM.getLifts(userID: userVM.user.id)
+                    userVM.cardios = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)]
+                }
         }
     }
 }

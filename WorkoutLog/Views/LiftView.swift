@@ -13,6 +13,7 @@ struct LiftView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userVM: UserViewModel
     @State var inputMuscles: Set<Muscle>
+    @EnvironmentObject var fbVM: FirebaseViewModel
     var body: some View {
         VStack {
             HStack {
@@ -59,6 +60,9 @@ struct LiftView: View {
             HStack {
                 Button {
                     userVM.removeLift(lift: lift)
+                    Task {
+                        await fbVM.removeLift(userID: userVM.user.id, liftID: lift.id.uuidString)
+                    }
                     dismiss()
                 } label: {
                     HStack {
@@ -71,6 +75,9 @@ struct LiftView: View {
                 Button {
                     lift.muscles = Array(inputMuscles)
                     userVM.updateLift(lift: lift)
+                    Task {
+                        await fbVM.addOrUpdateLift(lift: lift, userID: userVM.user.id)
+                    }
                     dismiss()
                 } label: {
                     HStack {

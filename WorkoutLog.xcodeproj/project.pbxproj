@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5762CE912E5371F90057D70F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5762CE902E5371F90057D70F /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		575A642E2E36847300324B03 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,30 @@
 		575A64372E36847300324B03 /* WorkoutLogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkoutLogUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5762CE8D2E53718C0057D70F /* Exceptions for "WorkoutLog" folder in "WorkoutLogTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 575A642C2E36847300324B03 /* WorkoutLogTests */;
+		};
+		5762CE8E2E53718C0057D70F /* Exceptions for "WorkoutLog" folder in "WorkoutLogUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 575A64362E36847300324B03 /* WorkoutLogUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		575A64222E36847200324B03 /* WorkoutLog */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5762CE8D2E53718C0057D70F /* Exceptions for "WorkoutLog" folder in "WorkoutLogTests" target */,
+				5762CE8E2E53718C0057D70F /* Exceptions for "WorkoutLog" folder in "WorkoutLogUITests" target */,
+			);
 			path = WorkoutLog;
 			sourceTree = "<group>";
 		};
@@ -52,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5762CE912E5371F90057D70F /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +138,7 @@
 			);
 			name = WorkoutLog;
 			packageProductDependencies = (
+				5762CE902E5371F90057D70F /* FirebaseFirestore */,
 			);
 			productName = WorkoutLog;
 			productReference = 575A64202E36847200324B03 /* WorkoutLog.app */;
@@ -195,6 +222,9 @@
 			);
 			mainGroup = 575A64172E36847100324B03;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5762CE8F2E5371F90057D70F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 575A64212E36847200324B03 /* Products */;
 			projectDirPath = "";
@@ -550,6 +580,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5762CE8F2E5371F90057D70F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5762CE902E5371F90057D70F /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5762CE8F2E5371F90057D70F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 575A64182E36847100324B03 /* Project object */;
 }

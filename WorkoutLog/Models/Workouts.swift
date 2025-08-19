@@ -5,9 +5,10 @@
 //  Created by Alec Hance on 8/9/25.
 //
 import SwiftUI
+import FirebaseFirestore
 
 
-enum Muscle: String, CaseIterable, Identifiable {
+enum Muscle: String, CaseIterable, Identifiable, Codable {
     case chest, triceps, biceps, shoulders, quads, hamstrings, back
     
     var id: String { self.rawValue }
@@ -25,7 +26,7 @@ protocol Workout: Identifiable {
 }
 
 
-struct Lift: Identifiable, Workout {
+struct Lift: Identifiable, Workout, Codable {
     var id: UUID = UUID()
     
     var name: String
