@@ -12,7 +12,7 @@ class UserViewModel: ObservableObject {
     @Published var cardios: [Cardio]
     @Published var lifts: [Lift]
     
-    init(user: User = User(id: "Default", name: "Default", email: "default@gmail.com"), cardios: [Cardio] = [], lifts: [Lift] = []) {
+    init(user: User = User(id: "alec", name: "alec", email: "alec@gmail.com"), cardios: [Cardio] = [], lifts: [Lift] = []) {
         self.user = user
         self.cardios = cardios
         self.lifts = lifts

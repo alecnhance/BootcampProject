@@ -39,6 +39,7 @@ struct LogView: View {
     @State var inputMuscles: Set<Muscle> = []
     @State var showCardio: Bool = false
     @State var insertDate: Date = Date()
+    @EnvironmentObject var fbVM: FirebaseViewModel
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -92,6 +93,12 @@ struct LogView: View {
         NavigationStack {
             VStack(alignment: .leading) {
                 Button {
+                    inputName = ""
+                    inputSets = ""
+                    inputPRs = ""
+                    inputDate = ""
+                    inputMuscles = []
+                    insertDate = Date()
                     showingSheet.toggle()
                 } label: {
                     Image(systemName: "chevron.left")
@@ -146,11 +153,17 @@ struct LogView: View {
                 }
                 Button {
                     showingSheet.toggle()
-                    userVM.addLift(lift: Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: Array(inputMuscles), numberPRs: Int(inputPRs) ?? -1))
+                    let tempLift = Lift(name: inputName, date: insertDate, numberSets: Int(inputSets) ?? -1, muscles: Array(inputMuscles), numberPRs: Int(inputPRs) ?? -1)
+                    userVM.addLift(lift: tempLift)
+                    Task {
+                        await fbVM.addOrUpdateLift(lift: tempLift, userID: userVM.user.id)
+                    }
                     inputName = ""
                     inputSets = ""
                     inputPRs = ""
                     inputDate = ""
+                    inputMuscles = []
+                    insertDate = Date()
                 } label: {
                     Text("Finish")
                         .foregroundStyle(.cyan)
