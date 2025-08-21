@@ -23,8 +23,7 @@ struct WorkoutLogApp: App {
         UISegmentedControl.appearance().setTitleTextAttributes(normalAttrs, for: .normal)
         UISegmentedControl.appearance().setTitleTextAttributes(selectedAttrs, for: .selected)
         
-        UIDatePicker.appearance().tintColor = .orange // accent highlight
-        UIDatePicker.appearance().backgroundColor = .black // wheel/inline background
+        UIDatePicker.appearance().tintColor = .white // accent highlight
     }
     var body: some Scene {
         WindowGroup {
