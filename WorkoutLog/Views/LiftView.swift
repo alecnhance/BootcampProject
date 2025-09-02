@@ -11,7 +11,7 @@ struct LiftView: View {
     @State var lift: Lift
     var id: UUID
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var userVM: UserViewModel
+    var userVM: UserViewModel
     @State var inputMuscles: Set<Muscle>
     var body: some View {
         VStack {
