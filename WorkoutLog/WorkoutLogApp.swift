@@ -39,15 +39,22 @@ struct WorkoutLogApp: App {
     }
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @State var userVM: UserViewModel = UserViewModel()
-    @StateObject var fbVM: FirebaseViewModel = FirebaseViewModel.vm
+    @State var fbVM: FirebaseViewModel? = nil
     var body: some Scene {
         WindowGroup {
-            LogView(userVM: userVM)
-                .environmentObject(fbVM)
-                .task {
-                    userVM.lifts = await fbVM.getLifts(userID: userVM.user.id)
-                    userVM.cardios = [Cardio(name: "Seated Bike", date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), minutes: 30, calories: 300, maxHR: 150), Cardio(name: "Eliptical", date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), minutes: 45, calories: 400, maxHR: 140)]
-                }
+            if let fbVM = fbVM {
+                LogView(userVM: userVM)
+                    .environment(fbVM)
+                    .task {
+                        userVM.lifts = await fbVM.getLifts(userID: userVM.user.id)
+                    }
+            } else {
+                ProgressView("Loading...")
+                    .task {
+                        // initialize AFTER FirebaseApp.configure() runs
+                        fbVM = FirebaseViewModel.vm
+                    }
+            }
         }
     }
 }

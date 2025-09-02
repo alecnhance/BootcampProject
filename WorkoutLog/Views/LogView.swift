@@ -39,7 +39,7 @@ struct LogView: View {
     @State var inputMuscles: Set<Muscle> = []
     @State var showCardio: Bool = false
     @State var insertDate: Date = Date()
-    @EnvironmentObject var fbVM: FirebaseViewModel
+    @Environment(FirebaseViewModel.self) var fbVM: FirebaseViewModel
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in

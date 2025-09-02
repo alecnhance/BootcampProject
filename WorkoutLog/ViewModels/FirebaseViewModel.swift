@@ -8,11 +8,13 @@
 import Foundation
 import FirebaseFirestore
 
-class FirebaseViewModel: ObservableObject {
+@Observable class FirebaseViewModel {
     static let vm = FirebaseViewModel()
-    let db = Firestore.firestore()
+    let db: Firestore
     
-    private init() {}
+    private init() {
+        db = Firestore.firestore()
+    }
     
     func getLifts(userID: String) async -> [Lift] {
         let collectionRef = db.collection("USERS").document(userID).collection("LIFTS")

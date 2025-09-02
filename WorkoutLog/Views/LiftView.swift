@@ -13,7 +13,7 @@ struct LiftView: View {
     @Environment(\.dismiss) var dismiss
     var userVM: UserViewModel
     @State var inputMuscles: Set<Muscle>
-    @EnvironmentObject var fbVM: FirebaseViewModel
+    @Environment(FirebaseViewModel.self) var fbVM: FirebaseViewModel
     var body: some View {
         VStack {
             HStack {
