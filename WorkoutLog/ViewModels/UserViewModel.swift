@@ -7,10 +7,10 @@
 import SwiftUI
 import Foundation
 
-class UserViewModel: ObservableObject {
+@Observable class UserViewModel {
     var user: User
-    @Published var cardios: [Cardio]
-    @Published var lifts: [Lift]
+    var cardios: [Cardio]
+    var lifts: [Lift]
     
     init(user: User = User(id: "alec", name: "alec", email: "alec@gmail.com"), cardios: [Cardio] = [], lifts: [Lift] = []) {
         self.user = user

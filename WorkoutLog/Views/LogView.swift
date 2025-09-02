@@ -30,7 +30,7 @@ extension Array where Element: Workout {
 
 
 struct LogView: View {
-    @ObservedObject var userVM: UserViewModel
+    var userVM: UserViewModel
     @State var showingSheet: Bool = false
     @State var inputName: String = ""
     @State var inputSets: String = ""

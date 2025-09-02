@@ -38,7 +38,7 @@ struct WorkoutLogApp: App {
         //UIDatePicker.appearance().backgroundColor = .black // wheel/inline background
     }
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject var userVM: UserViewModel = UserViewModel()
+    @State var userVM: UserViewModel = UserViewModel()
     @StateObject var fbVM: FirebaseViewModel = FirebaseViewModel.vm
     var body: some Scene {
         WindowGroup {
